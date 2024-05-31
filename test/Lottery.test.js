@@ -93,18 +93,36 @@ describe("Lottery Contract", () => {
     await lottery.methods.pickWinner().send({ from: accounts[0] });
 
     const finalBalance = await web3.eth.getBalance(accounts[0]);
+
     const difference = finalBalance - initialBalance;
 
     assert(difference > web3.utils.toWei("1.8", "ether"));
   });
 
   it("confirms that the players array is empty", async () => {
+    await lottery.methods.enter().send({
+      from: accounts[0],
+      value: web3.utils.toWei("0.02", "ether"),
+    });
+
+    await lottery.methods.enter().send({
+      from: accounts[1],
+      value: web3.utils.toWei("0.02", "ether"),
+    });
+
+    await lottery.methods.enter().send({
+      from: accounts[2],
+      value: web3.utils.toWei("0.02", "ether"),
+    });
+
+    await lottery.methods.pickWinner().send({
+      from: accounts[0],
+    });
+
     const players = await lottery.methods.getPlayers().call({
       from: accounts[0],
     });
 
     assert.equal(0, players.length);
   });
-
-  /*   it("confirms that the lottery has a balance of zero", async () => {}); */
 });
